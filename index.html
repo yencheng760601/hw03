@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Untitled Document</title>
+    <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+
+<body>
+    
+   <input type="button" value="新增" onclick="update()">
+<input type="button" value="移除" onclick="update_remove()">
+    <script>
+        //使用迴圈將array中值寫到div中
+        var arr = [85, 60, 99, 49, 77, 82];
+        var w = 600;
+        var h = 400;//svg 寬高
+        var p = 20;//圖跟邊框的距離
+        
+        svg();
+        bind(arr);
+        render();
+        
+        function svg(){
+            d3.select("body").append("svg").attr({
+               "width" : w,
+                "height" : h
+            });
+        }
+        
+        function bind(data) {
+            //做綁定的動作
+            var selection = d3.select("svg").selectAll("rect").data(data);
+            selection.enter().append("rect");
+            selection.exit().remove();
+            
+            var selection_text = d3.select("svg").selectAll("text").data(data);
+            //若視覺元素缺少時自動補到跟資料一樣多筆
+            selection_text.enter().append("text");
+            //若資料比視覺元素少會刪掉多的視覺元素
+            selection_text.exit().remove();
+        }
+
+
+        function render() {
+            //顯示資料在視覺元素上  //第一個參數是資料，第二個是index
+            d3.selectAll("rect").attr({
+               "x":function(d,i){
+                   return p+23*i;
+               },
+                "y":function(d){
+                    return h-p-d;
+                },
+                "width":20,//bar寬
+                "height":function(d){
+                return d;
+            },"fill":function(d){
+                if(d<70){
+                    return "red";
+                }else{return "blue"}
+            }
+            });
+            
+            d3.selectAll("text").attr({
+               "x":function(d,i){
+                   return p+23*i;
+               },
+                "y":function(d){
+                    return h-p+20;
+                },"font-size":12
+            }).text(function(d){
+                return d;
+            })
+        }
+
+        function update(){
+            var num = random(10,100);
+            arr.push(num);
+            bind(arr);
+            render();
+        }
+        function update_remove(){
+            var num = random(10,100);
+            arr.pop();
+            bind(arr);
+            render();
+        }
+        function random(N,M){
+//            return Math.ceil(Math.random()*(M-N)+N);
+            var rScale = d3.scale.linear().domain([0,1]).rangeRound([N,M]);
+            return rScale(Math.random());
+        }
+        
+        
+        
+        var index = ["中國國民黨", "民主進步黨", "時代力力量", "無黨團結聯盟", "親民黨"];
+var color = ["blue","green","yellow","gray","orange"];
+
+var xScale = d3.scale.ordinal()
+      .domain(index)
+      .range(color);
+
+console.log(xScale("時代力力量"));
+    </script>
+
+</body>
+
+</html>
+
+
